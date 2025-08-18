@@ -1,0 +1,12 @@
+// Tailwind CSS v4 Theme Configuration
+// Note: This is NOT used as a PostCSS plugin - see postcss.config.js for that
+module.exports = {
+  content: ['./src/**/*.{html,ts}'],
+  theme: {
+    extend: {
+      // Theme extensions go here
+    },
+  },
+  // Important: Keep plugins empty to avoid Angular auto-detection
+  plugins: [],
+};

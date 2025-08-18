@@ -1,7 +1,29 @@
-<main class="main-content">
-  <header>
-    <h1>Welcome to AcquiTrack</h1>
-    <p>Customer Acquisition Tracking System</p>
+<main class="min-h-screen bg-surface-0 p-6">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-color mb-4">Welcome to {{ title }}</h1>
+    <p class="text-lg text-color-secondary mb-6">
+      Customer Acquisition Tracking System
+    </p>
+
+    <!-- PrimeNG Component Test -->
+    <div class="flex gap-4 mb-6">
+      <p-button label="Primary Action" severity="primary" />
+      <p-button label="Secondary Action" severity="secondary" outlined />
+      <p-button label="Success" severity="success" icon="pi pi-check" />
+    </div>
+
+    <!-- PrimeNG Card Test -->
+    <p-card header="System Status" class="max-w-md">
+      <div class="flex items-center gap-3">
+        <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+        <div>
+          <p class="font-semibold text-color">All Systems Operational</p>
+          <p class="text-sm text-color-secondary">
+            Last updated: {{ currentTime }}
+          </p>
+        </div>
+      </div>
+    </p-card>
   </header>
 
   <router-outlet></router-outlet>

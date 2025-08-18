@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "tailwindcss": ["./node_modules/@tailwindcss/postcss"]
+    }
+  }
+}

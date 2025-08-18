@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "cli": {
+    "analytics": false
+  },
+  "projects": {
+    "acquitrack": {
+      "build": {
+        "options": {
+          "tailwindCss": false
+        }
+      }
+    }
+  }
+}

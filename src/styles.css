@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+/* AcquiTrack Global Styles */
+
+/* TailwindCSS v4 - Use @import instead of @tailwind directives */
+@import 'tailwindcss';
+
+/* TailwindCSS PrimeUI Integration (v4 CSS-based approach) */
+/* This provides Nora theme tokens and PrimeNG component styling */
+@import 'tailwindcss-primeui';
+
+/* PrimeIcons */
+@import 'primeicons/primeicons.css';
+@import 'primeicons/primeicons.css';
+@import 'primeicons/primeicons.css';
+
+/* Global Application Styles */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+}
+
+/* Ensure consistent box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

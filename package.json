@@ -17,7 +17,8 @@
     "format": "prettier --write \"src/**/*.{ts,html,css,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\"",
     "precommit": "npm run lint && npm run format:check && npm run test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:tailwind": "node scripts/check-tailwind-postcss.cjs"
   },
   "lint-staged": {
     "src/**/*.{ts,html}": [
@@ -36,16 +37,21 @@
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "autoprefixer": "^10.4.21",
+    "primeicons": "^7.0.0",
+    "primeng": "^20.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^20.0.0",
     "@angular/build": "^20.1.6",
     "@angular/cli": "^20.1.6",
     "@angular/compiler-cli": "^20.1.0",
     "@eslint/js": "^9.33.0",
     "@playwright/test": "^1.54.2",
+    "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/angular": "^18.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.7.0",
@@ -61,9 +67,13 @@
     "jest-environment-jsdom": "^30.0.5",
     "jest-preset-angular": "^15.0.0",
     "lint-staged": "^16.1.5",
+    "postcss": "^8.5.6",
     "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.12",
+    "tailwindcss-primeui": "^0.6.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.2",
-    "typescript-eslint": "8.34.1"
+    "typescript-eslint": "8.34.1",
+    "webpack": "^5.101.3"
   }
 }

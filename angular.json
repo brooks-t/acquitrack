@@ -20,6 +20,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/acquitrack",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -33,7 +35,20 @@
             ],
             "styles": [
               "src/styles.css"
-            ]
+            ],
+            "inlineStyleLanguage": "css",
+            "stylePreprocessorOptions": {
+              "includePaths": []
+            },
+            "optimization": {
+              "styles": {
+                "minify": true,
+                "inlineCritical": false
+              }
+            },
+            "extractLicenses": false,
+            "sourceMap": false,
+            "namedChunks": false
           },
           "configurations": {
             "production": {
