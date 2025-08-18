@@ -30,11 +30,27 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
+      '@angular-eslint/no-empty-lifecycle-method': 'error',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      '@angular-eslint/use-lifecycle-interface': 'error',
     },
   },
   {
     files: ['**/*.html'],
-    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-    rules: {},
+    extends: [
+      ...angular.configs.templateRecommended,
+      ...angular.configs.templateAccessibility,
+    ],
+    rules: {
+      '@angular-eslint/template/banana-in-box': 'error',
+      '@angular-eslint/template/no-negated-async': 'error',
+    },
   },
+  {
+    files: ['**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+    },
+  }
 );
