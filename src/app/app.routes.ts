@@ -4,8 +4,8 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./minimal-layout.component').then(
-        (m) => m.MinimalLayoutComponent
+      import('./layout/core-layout-simple.component').then(
+        (m) => m.CoreLayoutComponent
       ),
     children: [
       {
@@ -16,8 +16,22 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./minimal-dashboard.component').then(
-            (m) => m.MinimalDashboardComponent
+          import('./features/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
+          ),
+      },
+      {
+        path: 'vendors',
+        loadComponent: () =>
+          import('./features/vendors/vendor-list.component').then(
+            (m) => m.VendorListComponent
+          ),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/reports/reports.component').then(
+            (m) => m.ReportsComponent
           ),
       },
     ],
