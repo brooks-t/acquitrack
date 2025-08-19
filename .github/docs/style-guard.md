@@ -1,6 +1,6 @@
 # StyleGuard Checklist — AcquiTrack
 
-> **Purpose**: Prevent custom tokens, colors, spacing, or typography that conflict with the **Nora design system**. Always use PrimeNG + TailwindCSS with `tailwindcss-primeui` integration.
+> **Purpose**: Prevent custom tokens, colors, spacing, or typography that conflict with the **Nora design system**. Always use PrimeNG + TailwindCSS v3 with custom CSS properties for PrimeNG integration.
 
 ---
 
@@ -71,16 +71,16 @@
 
 ## 📚 Quick Reference
 
-### **Common Nora Tokens (via Tailwind)**
+### **Common Nora Tokens (via TailwindCSS v3)**
 
 ```css
-/* Colors */
-.bg-primary          /* Primary brand color */
+/* Colors (using custom CSS properties) */
+.bg-primary-500      /* Primary brand color */
 .bg-surface-0        /* White/lightest surface */
 .bg-surface-50       /* Very light surface */
 .bg-surface-100      /* Light surface */
-.text-color          /* Default text color */
-.text-color-secondary /* Secondary text color */
+.text-surface-700    /* Default text color */
+.text-surface-500    /* Secondary text color */
 
 /* Spacing */
 .p-2, .p-4, .p-6     /* Padding */
@@ -161,4 +161,44 @@
 
 ---
 
-**Remember**: When in doubt, check the **Nora theme documentation** and **PrimeNG component library** first before creating custom styles.
+## 🚨 Emergency Fallback Plans
+
+### **PrimeNG v20 Theming Issues**
+
+If Nora theming becomes too complex with PrimeNG v20's new `@primeuix/*` architecture:
+
+**Fallback Strategy:**
+
+1. **Remove Nora theming**: Use PrimeNG default theme (no custom CSS imports)
+2. **Simplify color system**: Use TailwindCSS default colors + minimal custom properties
+3. **Component-first approach**: Rely on PrimeNG component defaults + TailwindCSS utilities
+
+**Fallback Implementation:**
+
+```css
+/* styles.css - Simplified fallback */
+@import 'primeicons/primeicons.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minimal custom properties only if needed */
+:root {
+  --brand-primary: #3b82f6;
+  --brand-secondary: #64748b;
+}
+```
+
+### **TailwindCSS Issues**
+
+If TailwindCSS integration becomes problematic:
+
+**Ultimate Fallback:**
+
+- Remove TailwindCSS entirely
+- Use plain CSS + PrimeNG defaults
+- Custom CSS properties for consistent spacing/colors
+
+---
+
+**Remember**: When in doubt, check the **Nora theme documentation** and **PrimeNG component library** first before creating custom styles. If theming becomes blocking, **prioritize delivery over perfect styling** and use the fallback plans above.

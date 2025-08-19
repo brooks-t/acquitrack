@@ -1,11 +1,11 @@
-// Simple guard to enforce Tailwind v4 setup with @tailwindcss/postcss
-// and ensure global styles import the v4 entrypoint.
+// Simple guard to enforce TailwindCSS v3 setup with standard PostCSS plugins
+// and ensure global styles use @tailwind directives (not v4 @import syntax).
 const fs = require('fs');
 const path = require('path');
 
 const errors = [];
 
-// 1) Ensure postcss.config.* exists and uses @tailwindcss/postcss
+// 1) Ensure postcss.config.* exists and uses tailwindcss (not @tailwindcss/postcss)
 const postcssCandidates = [
   'postcss.config.js',
   'postcss.config.cjs',
@@ -25,19 +25,19 @@ for (const file of postcssCandidates) {
 if (!postcssFound) {
   errors.push('Missing postcss.config.(js|cjs|mjs) at repo root.');
 } else {
-  if (!postcssContent.includes('@tailwindcss/postcss')) {
+  if (!postcssContent.includes('tailwindcss:')) {
     errors.push(
-      "postcss.config.* must use '@tailwindcss/postcss' plugin (Tailwind v4)."
+      "postcss.config.* must use 'tailwindcss: {}' plugin (TailwindCSS v3)."
     );
   }
-  if (postcssContent.match(/tailwindcss["']?\s*[),}]/)) {
+  if (postcssContent.includes('@tailwindcss/postcss')) {
     errors.push(
-      "postcss.config.* must NOT register 'tailwindcss' as a PostCSS plugin (that is v3 style)."
+      "postcss.config.* must NOT use '@tailwindcss/postcss' plugin (that is v4 style, we use v3)."
     );
   }
 }
 
-// 2) Ensure styles import Tailwind v4 entrypoint
+// 2) Ensure styles use TailwindCSS v3 @tailwind directives
 const styleCandidates = [
   'src/styles.css',
   'src/styles.scss',
@@ -56,29 +56,43 @@ for (const file of styleCandidates) {
 if (!stylesFound) {
   errors.push('Missing global styles file (src/styles.css|scss|sass).');
 } else {
-  if (
-    !stylesContent.includes("@import 'tailwindcss'") &&
-    !stylesContent.includes('@import "tailwindcss"')
-  ) {
-    errors.push(
-      'Global styles must include: @import "tailwindcss"; at the top (Tailwind v4).'
-    );
+  const requiredDirectives = [
+    '@tailwind base',
+    '@tailwind components',
+    '@tailwind utilities',
+  ];
+  for (const directive of requiredDirectives) {
+    if (!stylesContent.includes(directive)) {
+      errors.push(
+        `Global styles must include: ${directive}; (TailwindCSS v3 syntax).`
+      );
+    }
   }
+
+  // Warn against v4 syntax
   if (
-    !stylesContent.includes("@import 'tailwindcss-primeui'") &&
-    !stylesContent.includes('@import "tailwindcss-primeui"')
+    stylesContent.includes("@import 'tailwindcss'") ||
+    stylesContent.includes('@import "tailwindcss"')
   ) {
     errors.push(
-      'Global styles should include: @import "tailwindcss-primeui"; after the Tailwind import.'
+      'Global styles should NOT use @import "tailwindcss"; (that is v4 syntax, we use v3 @tailwind directives).'
     );
   }
 }
 
+// 3) Ensure tailwind.config.js exists (unlike v4, v3 requires explicit config)
+const tailwindConfigPath = path.resolve(process.cwd(), 'tailwind.config.js');
+if (!fs.existsSync(tailwindConfigPath)) {
+  errors.push(
+    'Missing tailwind.config.js at repo root (required for TailwindCSS v3).'
+  );
+}
+
 if (errors.length) {
-  console.error('\n❌ Tailwind v4 / PostCSS / PrimeUI setup check failed:');
+  console.error('\n❌ TailwindCSS v3 / PostCSS setup check failed:');
   for (const e of errors) console.error(' - ' + e);
   console.error('\nFix the issues above. Failing as a safeguard.\n');
   process.exit(1);
 } else {
-  console.log('✅ Tailwind v4 / PostCSS / PrimeUI setup looks correct.');
+  console.log('✅ TailwindCSS v3 / PostCSS setup looks correct.');
 }

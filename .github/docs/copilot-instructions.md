@@ -17,32 +17,27 @@
 ## Golden Rules (Read First, Every Time)
 
 1. **Framework & Versions**
-
    - Use **Angular 20+** with **standalone components**, **control flow syntax** (`@if`, `@for`, `@switch`), and **Signals** where appropriate.
    - Follow **modern Angular file naming conventions** (no legacy suffix-based names; use the Angular CLI defaults).
    - Use **PrimeNG (latest)** + **Nora preset** (default **light** style).
    - Use **TailwindCSS** with `tailwindcss-primeui` integration to consume Nora tokens (no custom color hex values unless explicitly requested).
 
 2. **Styling & Theming**
-
    - **Do not** invent custom tokens, colors, spacing, or typography.
    - **Always** use **Nora design tokens** via Tailwind utility classes and PrimeNG’s theme variables.
    - Keep the **default Nora light theme** unless instructed to add dark mode.
 
 3. **Components & Library**
-
    - Prefer **PrimeNG** components for all UI (tables, forms, dialogs, menus, toasts, steps, tabs, etc.).
    - Don’t swap in other UI libs. If something’s missing, search PrimeNG first, then propose an approach using PrimeNG building blocks.
    - **Important**: Use **updated PrimeNG component naming conventions** (e.g., `p-table`, `p-button`, `p-card`, not legacy names like `p-datatable`).
 
 4. **Accessibility & UX**
-
    - Follow **WCAG 2.2 AA**. Use semantic roles/labels and keyboard support for all interactive elements.
    - Use PrimeNG’s built-in a11y patterns; add `aria-*` attributes where needed.
    - Never rely on color alone for meaning.
 
    ### Accessibility Guardrails
-
    - Always provide `aria-label` or `aria-labelledby` for icon-only buttons, inputs, or controls.
    - Ensure form fields use `<label for="...">` tied to the input `id`.
    - Use PrimeNG’s keyboard navigation patterns (arrow keys, tab order) and test them.
@@ -53,13 +48,11 @@
 > Rule: if it’s interactive, it must be reachable by keyboard and announced correctly by a screen reader.
 
 5. **Code Quality & Discipline**
-
    - Keep PRs and steps **small**. **Explain what you’re doing and why** at each step.
    - Enforce **ESLint**, **Prettier**, **Type-checked Templates**, and strict TypeScript.
    - Add **unit tests** (Jest + Testing Library) and **e2e tests** (Playwright) as you go.
 
 6. **Ask Before Diverging**
-
    - If a requirement is ambiguous or would introduce new dependencies, **ask first**.
    - Provide 2–3 clear options with trade-offs when proposing changes.
 
@@ -126,20 +119,21 @@ AcquiTrack is an enterprise-grade **government procurement & acquisitions** app.
 - Configure Jest + Testing Library and Playwright.
 - Create `CONTRIBUTING.md` with run/lint/test instructions.
 
-### M1 — PrimeNG + Nora + Tailwind Integration
+### M1 — PrimeNG + Nora + TailwindCSS v3 Integration
 
 - ✅ PrimeNG installed and wired.
-- ✅ TailwindCSS configured with `tailwindcss-primeui`.
-- ✅ **Nora preset** applied (default **light**).
-- ✅ Global styles import only Nora/Prime tokens—**no custom theme**.
-- ✅ `ThemeService` for theme tokens access (if needed) without overriding defaults.
+- ✅ **TailwindCSS v3** configured with custom PrimeNG color tokens.
+- ✅ **Nora preset** styling approach (custom CSS properties matching Nora design system).
+- ✅ Global styles import only Nora/Prime tokens—**no custom theme overrides**.
+- ✅ `StyleGuard` checklist for preventing custom tokens.
 
 **Copilot tasks**
 
-- Install: `primeng`, `primeicons`, `tailwindcss`, `tailwindcss-primeui`, `postcss`, `autoprefixer`.
-- Configure `tailwind.config.js` to include `primeui` plugin and Angular template paths.
-- Import Nora preset in `styles.css` and verify a PrimeNG component renders with Nora look.
-- Add a `StyleGuard` checklist to prevent custom tokens.
+- Install: `primeng`, `primeicons`, `tailwindcss@^3.4.0`, `@tailwindcss/forms`, `@tailwindcss/typography`, `autoprefixer`.
+- Configure `tailwind.config.js` with PrimeNG color token extensions and Angular template paths.
+- Import PrimeIcons and configure TailwindCSS v3 directives in `styles.css`.
+- Add custom CSS properties that match Nora design system color scales.
+- Verify TailwindCSS utility classes render correctly in components.
 
 ### M2 — App Shell, Layout, & Navigation
 
@@ -208,8 +202,8 @@ AcquiTrack is an enterprise-grade **government procurement & acquisitions** app.
 
 - **Angular 20+** (standalone, Signals, control flow)
 - **PrimeNG** + **PrimeIcons**
-- **Nora preset** (default light)
-- **TailwindCSS** + `tailwindcss-primeui`
+- **Nora design system** (custom CSS properties matching Nora color scales)
+- **TailwindCSS v3** + `@tailwindcss/forms` + `@tailwindcss/typography`
 - **State**: signals + service-based stores (no NgRx unless requested)
 - **Forms**: Angular Reactive Forms + PrimeNG form controls
 - **Testing**: Jest + Testing Library, Playwright for e2e
@@ -312,10 +306,10 @@ Adopt these rules so code generation aligns with modern Angular (v20+) patterns.
 
 ```html
 <p-card class="p-4">
-	<div class="flex items-center justify-between">
-		<h2 class="text-xl font-semibold">My Tasks</h2>
-		<p-button label="New" icon="pi pi-plus"></p-button>
-	</div>
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-semibold">My Tasks</h2>
+    <p-button label="New" icon="pi pi-plus"></p-button>
+  </div>
 </p-card>
 ```
 
@@ -324,8 +318,8 @@ Adopt these rules so code generation aligns with modern Angular (v20+) patterns.
 ```css
 /* ❌ Don’t do this */
 .my-card {
-	background: #2b6cb0;
-	border-radius: 3px;
+  background: #2b6cb0;
+  border-radius: 3px;
 }
 ```
 
@@ -437,16 +431,16 @@ features/
 #### Example: Convert Observable to Signal
 
 ```ts
-import { toSignal } from "@angular/core/rxjs-interop";
-import { catchError, of } from "rxjs";
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 
 export class PurchaseRequestService {
-	private http = inject(HttpClient);
+  private http = inject(HttpClient);
 
-	private _requests$ = this.http.get<PurchaseRequest[]>("/api/requests").pipe(
-		catchError(() => of([])) // handle errors gracefully
-	);
-	requests = toSignal(this._requests$, { initialValue: [] });
+  private _requests$ = this.http.get<PurchaseRequest[]>('/api/requests').pipe(
+    catchError(() => of([])) // handle errors gracefully
+  );
+  requests = toSignal(this._requests$, { initialValue: [] });
 }
 ```
 
@@ -498,7 +492,6 @@ export class PurchaseRequestService {
 ### Error Handling Strategy
 
 - **Global Errors**
-
   - Use an `HttpInterceptor` in `core/` to catch API errors and log them via the Audit service.
   - Show a transient `Toast` notification (PrimeNG `MessageService`) for generic failures.
   - Mask sensitive or technical error messages; show user-friendly text instead.
