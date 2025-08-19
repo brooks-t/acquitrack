@@ -34,6 +34,34 @@ export const routes: Routes = [
             (m) => m.ReportsComponent
           ),
       },
+      {
+        path: 'purchase-requests',
+        loadComponent: () =>
+          import('./minimal-dashboard.component').then(
+            (m) => m.MinimalDashboardComponent
+          ),
+      },
+      {
+        path: 'solicitations',
+        loadComponent: () =>
+          import('./minimal-dashboard.component').then(
+            (m) => m.MinimalDashboardComponent
+          ),
+      },
+      {
+        path: 'approvals',
+        loadComponent: () =>
+          import('./minimal-dashboard.component').then(
+            (m) => m.MinimalDashboardComponent
+          ),
+      },
+      {
+        path: 'admin',
+        loadComponent: () =>
+          import('./minimal-dashboard.component').then(
+            (m) => m.MinimalDashboardComponent
+          ),
+      },
     ],
   },
   {
