@@ -9,8 +9,8 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
+// import { IconFieldModule } from 'primeng/iconfield';
+// import { InputIconModule } from 'primeng/inputicon';
 import { BreadcrumbService } from '../../layout/breadcrumb.service';
 
 interface Vendor {
@@ -31,8 +31,8 @@ interface Vendor {
     ButtonModule,
     TableModule,
     InputTextModule,
-    IconFieldModule,
-    InputIconModule,
+    // IconFieldModule,
+    // InputIconModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -51,14 +51,16 @@ interface Vendor {
       <!-- Search and Filters -->
       <p-card header="Search Vendors">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <p-iconfield iconPosition="left">
-            <p-inputicon styleClass="pi pi-search" />
+          <div class="relative">
+            <i
+              class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-surface-400"
+            ></i>
             <input
               pInputText
               placeholder="Search by name, CAGE, or DUNS..."
-              class="w-full"
+              class="w-full pl-10"
             />
-          </p-iconfield>
+          </div>
           <p-button
             label="Advanced Filters"
             icon="pi pi-filter"

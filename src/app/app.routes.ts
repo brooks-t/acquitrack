@@ -37,6 +37,11 @@ export const routes: Routes = [
     ],
   },
   {
+    path: '__smoke',
+    loadComponent: () =>
+      import('./smoke.component').then((m) => m.SmokeComponent),
+  },
+  {
     path: '**',
     redirectTo: '/dashboard',
   },

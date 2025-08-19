@@ -122,18 +122,33 @@ AcquiTrack is an enterprise-grade **government procurement & acquisitions** app.
 ### M1 — PrimeNG + Nora + TailwindCSS v3 Integration
 
 - ✅ PrimeNG installed and wired.
-- ✅ **TailwindCSS v3** configured with custom PrimeNG color tokens.
-- ✅ **Nora preset** styling approach (custom CSS properties matching Nora design system).
-- ✅ Global styles import only Nora/Prime tokens—**no custom theme overrides**.
+- ✅ **TailwindCSS v3** configured with **official `tailwindcss-primeui` plugin**.
+- ✅ **Nora preset** styling approach using PrimeUI plugin integration.
+- ✅ **ES Module** configuration for modern JavaScript imports.
+- ✅ All PrimeNG design tokens available as Tailwind utilities (e.g., `bg-primary`, `text-color`).
 - ✅ `StyleGuard` checklist for preventing custom tokens.
 
 **Copilot tasks**
 
-- Install: `primeng`, `primeicons`, `tailwindcss@^3.4.0`, `@tailwindcss/forms`, `@tailwindcss/typography`, `autoprefixer`.
-- Configure `tailwind.config.js` with PrimeNG color token extensions and Angular template paths.
+- Install: `primeng`, `primeicons`, `tailwindcss@^3.4.0`, `tailwindcss-primeui`, `autoprefixer`.
+- Configure `tailwind.config.js` as ES module with `PrimeUI` plugin import.
+- Add `"type": "module"` to `package.json` for ES module support.
+- Update `postcss.config.js` to use ES module syntax.
 - Import PrimeIcons and configure TailwindCSS v3 directives in `styles.css`.
-- Add custom CSS properties that match Nora design system color scales.
-- Verify TailwindCSS utility classes render correctly in components.
+- Verify PrimeNG color utilities work correctly (no custom color definitions needed).
+
+**Key Integration Points:**
+
+- **Color Palette**: Use `primary-[50-950]`, `surface-[0-950]`, `text-color`, `text-muted-color`, etc.
+- **Semantic Colors**: `bg-primary`, `border-surface`, `bg-emphasis`, `bg-highlight`
+- **Animation**: Use plugin-provided animation utilities with PrimeNG components
+- **Dark Mode**: Plugin handles dark mode integration automatically with PrimeNG themes
+
+**DO NOT:**
+
+- Define custom color tokens manually (the plugin provides them)
+- Use CommonJS syntax in config files (use ES modules)
+- Override PrimeNG color variables (use the plugin utilities instead)
 
 ### M2 — App Shell, Layout, & Navigation
 
@@ -202,8 +217,9 @@ AcquiTrack is an enterprise-grade **government procurement & acquisitions** app.
 
 - **Angular 20+** (standalone, Signals, control flow)
 - **PrimeNG** + **PrimeIcons**
-- **Nora design system** (custom CSS properties matching Nora color scales)
-- **TailwindCSS v3** + `@tailwindcss/forms` + `@tailwindcss/typography`
+- **Nora design system** (via official `tailwindcss-primeui` plugin integration)
+- **TailwindCSS v3** + `tailwindcss-primeui` + `autoprefixer`
+- **ES Modules** configuration for modern JavaScript
 - **State**: signals + service-based stores (no NgRx unless requested)
 - **Forms**: Angular Reactive Forms + PrimeNG form controls
 - **Testing**: Jest + Testing Library, Playwright for e2e
