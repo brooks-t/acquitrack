@@ -4,8 +4,8 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./layout/core-layout-simple.component').then(
-        (m) => m.CoreLayoutComponent
+      import('./minimal-layout.component').then(
+        (m) => m.MinimalLayoutComponent
       ),
     children: [
       {
@@ -15,9 +15,9 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadChildren: () =>
-          import('./features/dashboard/dashboard.routes').then(
-            (m) => m.dashboardRoutes
+        loadComponent: () =>
+          import('./minimal-dashboard.component').then(
+            (m) => m.MinimalDashboardComponent
           ),
       },
     ],

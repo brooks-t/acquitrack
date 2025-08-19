@@ -1,15 +1,13 @@
 /* AcquiTrack Global Styles */
 
-/* TailwindCSS v4 - Use @import instead of @tailwind directives */
-@import 'tailwindcss';
+/* TailwindCSS v4 with source scanning */
+@import 'tailwindcss' source('./src/**/*.{html,ts}');
 
 /* TailwindCSS PrimeUI Integration (v4 CSS-based approach) */
 /* This provides Nora theme tokens and PrimeNG component styling */
 @import 'tailwindcss-primeui';
 
 /* PrimeIcons */
-@import 'primeicons/primeicons.css';
-@import 'primeicons/primeicons.css';
 @import 'primeicons/primeicons.css';
 
 /* Global Application Styles */
@@ -18,8 +16,21 @@ body {
   height: 100%;
   margin: 0;
   font-family: var(--font-family);
-  background-color: var(--surface-ground);
-  color: var(--text-color);
+}
+
+/* Direct TailwindCSS test */
+.test-green {
+  @apply bg-green-500 text-white p-4 rounded;
+}
+
+/* Debug: Force TailwindCSS to build these classes */
+.bg-green-500,
+.text-white,
+.p-4,
+.mt-4,
+.rounded {
+  /* This should force TailwindCSS to generate these classes */
+  display: block;
 }
 
 /* Ensure consistent box-sizing */
