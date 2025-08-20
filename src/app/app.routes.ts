@@ -36,9 +36,9 @@ export const routes: Routes = [
       },
       {
         path: 'purchase-requests',
-        loadComponent: () =>
-          import('./minimal-dashboard.component').then(
-            (m) => m.MinimalDashboardComponent
+        loadChildren: () =>
+          import('./features/purchase-requests/purchase-requests.routes').then(
+            (m) => m.purchaseRequestRoutes
           ),
       },
       {
