@@ -6,6 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
+import Nora from '@primeng/themes/nora';
 
 import { routes } from './app.routes';
 
@@ -17,8 +18,9 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     providePrimeNG({
       theme: {
-        preset: 'none',
+        preset: Nora,
         options: {
+          darkModeSelector: '.dark', // Use class-based dark mode selector
           cssLayer: {
             name: 'primeng',
             order: 'tailwind-base, primeng, tailwind-utilities',

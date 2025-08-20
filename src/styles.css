@@ -16,6 +16,25 @@
   @tailwind utilities;
 }
 
+/* Ensure light theme by default */
+:root {
+  color-scheme: light;
+}
+
+/* Debug: Force light mode CSS variables */
+:root,
+html,
+body {
+  /* Override any potential dark mode variables */
+  --p-surface-0: #ffffff;
+  --p-surface-50: #f9fafb;
+  --p-surface-100: #f3f4f6;
+  --p-surface-200: #e5e7eb;
+  --p-text-color: #1f2937;
+  --p-text-muted-color: #6b7280;
+  --p-text-color-secondary: #6b7280;
+}
+
 /* Global Application Styles */
 html,
 body {
@@ -28,6 +47,8 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
+  background-color: #ffffff;
+  color: #1f2937;
 }
 
 /* Ensure consistent box-sizing */
