@@ -251,7 +251,7 @@ import {
               </div>
             </ng-template>
 
-            <div class="space-y-3">
+            <div class="flex flex-col gap-4">
               <p-button
                 label="New Purchase Request"
                 icon="pi pi-plus"
