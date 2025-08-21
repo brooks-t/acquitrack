@@ -41,3 +41,20 @@ body {
 *::after {
   box-sizing: border-box;
 }
+
+/* PrimeNG Overlay Z-Index Fixes */
+/* Ensure dropdowns and overlays appear above table content */
+.p-select-overlay,
+.p-multiselect-overlay,
+.p-dropdown-overlay,
+.p-overlay,
+.p-component-overlay {
+  z-index: 9999 !important;
+}
+
+/* Ensure overlay panels appear above scrollable content */
+.p-select-panel,
+.p-multiselect-panel,
+.p-dropdown-panel {
+  z-index: 9999 !important;
+}

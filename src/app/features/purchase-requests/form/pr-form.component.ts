@@ -17,6 +17,7 @@ import {
   inject,
   signal,
   computed,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -212,6 +213,7 @@ interface LineItemForm {
                       Need Date <span class="text-red-500">*</span>
                     </label>
                     <p-datePicker
+                      id="needDate"
                       formControlName="needDate"
                       [minDate]="minDate()"
                       placeholder="Select when you need this"
@@ -234,10 +236,14 @@ interface LineItemForm {
                       Priority <span class="text-red-500">*</span>
                     </label>
                     <p-select
+                      id="priority"
                       formControlName="priority"
                       [options]="priorityOptions"
+                      optionLabel="label"
+                      optionValue="value"
                       placeholder="Select priority level"
                       styleClass="w-full"
+                      appendTo="body"
                       [class.ng-invalid]="isFieldInvalid('priority')"
                     />
                     @if (isFieldInvalid('priority')) {
@@ -248,16 +254,20 @@ interface LineItemForm {
                   <!-- Funding Source -->
                   <div class="space-y-2">
                     <label
-                      for="fundingSource"
+                      for="fundingSourceId"
                       class="block text-sm font-medium text-color"
                     >
                       Funding Source <span class="text-red-500">*</span>
                     </label>
                     <p-select
+                      id="fundingSourceId"
                       formControlName="fundingSourceId"
                       [options]="fundingSourceOptions()"
+                      optionLabel="label"
+                      optionValue="value"
                       placeholder="Select funding source"
                       styleClass="w-full"
+                      appendTo="body"
                       [class.ng-invalid]="isFieldInvalid('fundingSourceId')"
                     />
                     @if (isFieldInvalid('fundingSourceId')) {
@@ -292,6 +302,7 @@ interface LineItemForm {
                     Business Justification <span class="text-red-500">*</span>
                   </label>
                   <textarea
+                    id="justification"
                     pTextarea
                     formControlName="justification"
                     rows="4"
@@ -349,8 +360,6 @@ interface LineItemForm {
                   <div class="overflow-x-auto">
                     <p-table
                       [value]="lineItems.controls"
-                      [scrollable]="true"
-                      scrollHeight="400px"
                       styleClass="p-datatable-sm"
                     >
                       <ng-template pTemplate="header">
@@ -398,8 +407,11 @@ interface LineItemForm {
                             <p-select
                               formControlName="category"
                               [options]="categoryOptions"
+                              optionLabel="label"
+                              optionValue="value"
                               placeholder="Category"
                               styleClass="w-40"
+                              appendTo="body"
                             />
                           </td>
                           <td>
@@ -622,6 +634,7 @@ export class PurchaseRequestFormComponent implements OnInit {
   private purchaseRequestService = inject(PurchaseRequestService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private destroyRef = inject(DestroyRef);
 
   // Form state
   form: FormGroup;
@@ -635,6 +648,7 @@ export class PurchaseRequestFormComponent implements OnInit {
 
   // Data signals
   fundingSources = signal<FundingSource[]>([]);
+  fundingSourceId = signal<string>('');
   minDate = signal(new Date());
 
   // Step configuration
@@ -648,10 +662,15 @@ export class PurchaseRequestFormComponent implements OnInit {
   progressPercentage = computed(() => ((this.activeStep() + 1) / 3) * 100);
 
   selectedFundingSource = computed(() => {
-    const fundingSourceId = this.form?.get('fundingSourceId')?.value;
-    return (
-      this.fundingSources().find((fs) => fs.id === fundingSourceId) || null
-    );
+    const fundingSourceId = this.fundingSourceId();
+    console.log('Computing selectedFundingSource:', {
+      fundingSourceId,
+      fundingSources: this.fundingSources(),
+      formValue: this.form?.value,
+    });
+    const found = this.fundingSources().find((fs) => fs.id === fundingSourceId);
+    console.log('Found funding source:', found);
+    return found || null;
   });
 
   fundingSourceOptions = computed(() =>
@@ -686,6 +705,15 @@ export class PurchaseRequestFormComponent implements OnInit {
     this.form = this.createForm();
     this.setupAutoSave();
     this.loadFundingSources();
+
+    // Debug form value changes
+    this.form
+      .get('fundingSourceId')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        console.log('Funding source ID changed:', value);
+        this.fundingSourceId.set(value || '');
+      });
   }
 
   ngOnInit(): void {
@@ -755,7 +783,7 @@ export class PurchaseRequestFormComponent implements OnInit {
       .pipe(
         debounceTime(30000), // Save draft every 30 seconds
         distinctUntilChanged(),
-        takeUntilDestroyed()
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
         if (this.form.dirty && !this.isSubmitting()) {
@@ -1153,7 +1181,7 @@ export class PurchaseRequestFormComponent implements OnInit {
           // Create and then submit
           this.purchaseRequestService
             .createPurchaseRequest(request)
-            .pipe(takeUntilDestroyed())
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: (pr) => {
                 // Now submit
