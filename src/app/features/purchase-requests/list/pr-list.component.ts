@@ -9,7 +9,14 @@
  * - Responsive design
  */
 
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +72,7 @@ interface FilterOption {
     MultiSelectModule,
     PanelModule,
   ],
-  // changeDetection: ChangeDetectionStrategy.OnPush, // Temporarily remove OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6">
       <!-- Page Header -->
