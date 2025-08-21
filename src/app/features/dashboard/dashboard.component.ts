@@ -256,7 +256,7 @@ import {
                 label="New Purchase Request"
                 icon="pi pi-plus"
                 class="w-full"
-                routerLink="/purchase-requests"
+                routerLink="/purchase-requests/new"
               />
               <p-button
                 label="Add Vendor"

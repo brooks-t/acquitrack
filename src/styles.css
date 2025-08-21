@@ -1,4 +1,4 @@
-/* AcquiTrack Global Styles - TailwindCSS v3 with PrimeNG Integration */
+/* AcquiTrack Global Styles - TailwindCSS v3 with PrimeNG Nora Integration */
 
 /* Import external CSS first */
 @import 'primeicons/primeicons.css';
@@ -16,26 +16,12 @@
   @tailwind utilities;
 }
 
-/* Ensure light theme by default */
+/* Ensure light theme by default - NO custom overrides */
 :root {
   color-scheme: light;
 }
 
-/* Debug: Force light mode CSS variables */
-:root,
-html,
-body {
-  /* Override any potential dark mode variables */
-  --p-surface-0: #ffffff;
-  --p-surface-50: #f9fafb;
-  --p-surface-100: #f3f4f6;
-  --p-surface-200: #e5e7eb;
-  --p-text-color: #1f2937;
-  --p-text-muted-color: #6b7280;
-  --p-text-color-secondary: #6b7280;
-}
-
-/* Global Application Styles */
+/* Global Application Styles - Minimal, Nora-compatible only */
 html,
 body {
   height: 100%;
@@ -47,8 +33,6 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
-  background-color: #ffffff;
-  color: #1f2937;
 }
 
 /* Ensure consistent box-sizing */

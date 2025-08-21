@@ -9,7 +9,7 @@
  */
 
 import { Injectable, signal, computed } from '@angular/core';
-import { Observable, of, delay, throwError } from 'rxjs';
+import { Observable, of, delay, throwError, tap } from 'rxjs';
 import {
   PurchaseRequest,
   PurchaseRequestSummary,
@@ -108,7 +108,8 @@ export class PurchaseRequestService {
 
     // Simulate API call with delay
     return of(this._purchaseRequests()).pipe(
-      delay(500) // Simulate network delay
+      delay(500), // Simulate network delay
+      tap(() => this._isLoading.set(false)) // Set loading to false when done
     );
   }
 
@@ -123,10 +124,14 @@ export class PurchaseRequestService {
 
     if (!request) {
       this._error.set('Purchase request not found');
+      this._isLoading.set(false);
       return throwError(() => new Error('Purchase request not found'));
     }
 
-    return of(request).pipe(delay(300));
+    return of(request).pipe(
+      delay(300),
+      tap(() => this._isLoading.set(false))
+    );
   }
 
   /**

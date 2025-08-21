@@ -9,14 +9,7 @@
  * - Responsive design
  */
 
-import {
-  Component,
-  ChangeDetectionStrategy,
-  OnInit,
-  inject,
-  signal,
-  computed,
-} from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +19,7 @@ import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { BadgeModule } from 'primeng/badge';
@@ -39,6 +33,7 @@ import { PanelModule } from 'primeng/panel';
 import { PurchaseRequestService } from '../data/purchase-request.service';
 import { BreadcrumbService } from '../../../layout/breadcrumb.service';
 import {
+  PurchaseRequestSummary,
   PurchaseRequestStatus,
   Priority,
 } from '../data/purchase-request.model';
@@ -59,6 +54,7 @@ interface FilterOption {
     CardModule,
     ButtonModule,
     InputTextModule,
+    InputNumberModule,
     SelectModule,
     TagModule,
     BadgeModule,
@@ -69,7 +65,7 @@ interface FilterOption {
     MultiSelectModule,
     PanelModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush, // Temporarily remove OnPush
   template: `
     <div class="space-y-6">
       <!-- Page Header -->
@@ -157,8 +153,9 @@ interface FilterOption {
                 >
                   Search
                 </label>
-                <p-inputtext
+                <input
                   id="search"
+                  pInputText
                   [(ngModel)]="searchTerm"
                   placeholder="PR number, requester..."
                   class="w-full"
@@ -178,6 +175,8 @@ interface FilterOption {
                   id="status"
                   [(ngModel)]="selectedStatuses"
                   [options]="statusOptions"
+                  optionLabel="label"
+                  optionValue="value"
                   placeholder="Select statuses"
                   class="w-full"
                   (onChange)="onFilterChange()"
@@ -196,6 +195,8 @@ interface FilterOption {
                   id="priority"
                   [(ngModel)]="selectedPriorities"
                   [options]="priorityOptions"
+                  optionLabel="label"
+                  optionValue="value"
                   placeholder="Select priorities"
                   class="w-full"
                   (onChange)="onFilterChange()"
@@ -233,20 +234,18 @@ interface FilterOption {
                   Amount Range
                 </div>
                 <div class="space-y-2">
-                  <p-inputtext
+                  <p-inputnumber
                     [(ngModel)]="amountMin"
                     placeholder="Min amount"
-                    type="number"
                     class="w-full"
-                    (input)="onFilterChange()"
+                    (onInput)="onFilterChange()"
                     ariaLabel="Minimum amount"
                   />
-                  <p-inputtext
+                  <p-inputnumber
                     [(ngModel)]="amountMax"
                     placeholder="Max amount"
-                    type="number"
                     class="w-full"
-                    (input)="onFilterChange()"
+                    (onInput)="onFilterChange()"
                     ariaLabel="Maximum amount"
                   />
                 </div>
@@ -445,8 +444,9 @@ interface FilterOption {
           >
             Search
           </label>
-          <p-inputtext
+          <input
             id="mobile-search"
+            pInputText
             [(ngModel)]="searchTerm"
             placeholder="PR number, requester..."
             class="w-full"
@@ -472,15 +472,79 @@ export class PurchaseRequestListComponent implements OnInit {
   stats = this.purchaseRequestService.stats;
   purchaseRequests = this.purchaseRequestService.purchaseRequestSummaries;
 
-  // Filter state
-  searchTerm = signal('');
-  selectedStatuses = signal<PurchaseRequestStatus[]>([]);
-  selectedPriorities = signal<Priority[]>([]);
-  dateFrom = signal<Date | null>(null);
-  dateTo = signal<Date | null>(null);
-  amountMin = signal<number | null>(null);
-  amountMax = signal<number | null>(null);
+  // Filter state - using regular properties for ngModel compatibility
+  searchTerm = '';
+  selectedStatuses: PurchaseRequestStatus[] = [];
+  selectedPriorities: Priority[] = [];
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
+  amountMin: number | null = null;
+  amountMax: number | null = null;
   showMobileFilters = signal(false);
+
+  // Signal to trigger filter recalculation
+  private filterTrigger = signal(0);
+
+  // Reactive filtered results using computed
+  filteredRequests = computed(() => {
+    // Depend on the trigger to recalculate when filters change
+    this.filterTrigger();
+
+    let requests = this.purchaseRequests();
+    console.log('Raw purchase requests:', requests);
+
+    // Apply search term
+    if (this.searchTerm) {
+      const search = this.searchTerm.toLowerCase();
+      requests = requests.filter(
+        (pr: PurchaseRequestSummary) =>
+          pr.prNumber.toLowerCase().includes(search) ||
+          pr.requester.toLowerCase().includes(search) ||
+          pr.organization.toLowerCase().includes(search)
+      );
+    }
+
+    // Apply status filter
+    if (this.selectedStatuses.length > 0) {
+      requests = requests.filter((pr: PurchaseRequestSummary) =>
+        this.selectedStatuses.includes(pr.status)
+      );
+    }
+
+    // Apply priority filter
+    if (this.selectedPriorities.length > 0) {
+      requests = requests.filter((pr: PurchaseRequestSummary) =>
+        this.selectedPriorities.includes(pr.priority)
+      );
+    }
+
+    // Apply date range
+    if (this.dateFrom) {
+      requests = requests.filter(
+        (pr: PurchaseRequestSummary) => pr.createdAt >= this.dateFrom!
+      );
+    }
+    if (this.dateTo) {
+      requests = requests.filter(
+        (pr: PurchaseRequestSummary) => pr.createdAt <= this.dateTo!
+      );
+    }
+
+    // Apply amount range
+    if (this.amountMin !== null) {
+      requests = requests.filter(
+        (pr: PurchaseRequestSummary) => pr.totalAmount >= this.amountMin!
+      );
+    }
+    if (this.amountMax !== null) {
+      requests = requests.filter(
+        (pr: PurchaseRequestSummary) => pr.totalAmount <= this.amountMax!
+      );
+    }
+
+    console.log('Filtered requests:', requests);
+    return requests;
+  });
 
   // Filter options
   statusOptions: FilterOption[] = [
@@ -503,59 +567,14 @@ export class PurchaseRequestListComponent implements OnInit {
     { label: 'Urgent', value: Priority.URGENT },
   ];
 
-  // Computed filtered results
-  filteredRequests = computed(() => {
-    let requests = this.purchaseRequests();
-
-    // Apply search term
-    const search = this.searchTerm().toLowerCase();
-    if (search) {
-      requests = requests.filter(
-        (pr) =>
-          pr.prNumber.toLowerCase().includes(search) ||
-          pr.requester.toLowerCase().includes(search) ||
-          pr.organization.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply status filter
-    const statuses = this.selectedStatuses();
-    if (statuses.length > 0) {
-      requests = requests.filter((pr) => statuses.includes(pr.status));
-    }
-
-    // Apply priority filter
-    const priorities = this.selectedPriorities();
-    if (priorities.length > 0) {
-      requests = requests.filter((pr) => priorities.includes(pr.priority));
-    }
-
-    // Apply date range
-    const fromDate = this.dateFrom();
-    const toDate = this.dateTo();
-    if (fromDate) {
-      requests = requests.filter((pr) => pr.createdAt >= fromDate);
-    }
-    if (toDate) {
-      requests = requests.filter((pr) => pr.createdAt <= toDate);
-    }
-
-    // Apply amount range
-    const minAmount = this.amountMin();
-    const maxAmount = this.amountMax();
-    if (minAmount !== null) {
-      requests = requests.filter((pr) => pr.totalAmount >= minAmount);
-    }
-    if (maxAmount !== null) {
-      requests = requests.filter((pr) => pr.totalAmount <= maxAmount);
-    }
-
-    return requests;
-  });
-
   ngOnInit(): void {
     this.setBreadcrumbs();
     this.loadData();
+
+    // Debug logging
+    console.log('Component initialized');
+    console.log('Initial loading state:', this.isLoading());
+    console.log('Initial purchase requests:', this.purchaseRequests());
   }
 
   private setBreadcrumbs(): void {
@@ -567,36 +586,48 @@ export class PurchaseRequestListComponent implements OnInit {
 
   private loadData(): void {
     // Data is automatically loaded via service signals
-    this.purchaseRequestService.getPurchaseRequests().subscribe();
+    console.log('Loading purchase request data...');
+    this.purchaseRequestService.getPurchaseRequests().subscribe({
+      next: (data) => {
+        console.log('Purchase requests loaded:', data);
+      },
+      error: (error) => {
+        console.error('Error loading purchase requests:', error);
+      },
+    });
   }
 
   onSearchChange(): void {
-    // Filter updates automatically via computed signal
+    // Trigger filter recalculation
+    this.filterTrigger.update((v) => v + 1);
   }
 
   onFilterChange(): void {
-    // Filter updates automatically via computed signal
+    // Trigger filter recalculation
+    this.filterTrigger.update((v) => v + 1);
   }
 
   clearFilters(): void {
-    this.searchTerm.set('');
-    this.selectedStatuses.set([]);
-    this.selectedPriorities.set([]);
-    this.dateFrom.set(null);
-    this.dateTo.set(null);
-    this.amountMin.set(null);
-    this.amountMax.set(null);
+    this.searchTerm = '';
+    this.selectedStatuses = [];
+    this.selectedPriorities = [];
+    this.dateFrom = null;
+    this.dateTo = null;
+    this.amountMin = null;
+    this.amountMax = null;
+    // Trigger filter recalculation
+    this.filterTrigger.update((v) => v + 1);
   }
 
   hasActiveFilters(): boolean {
     return (
-      this.searchTerm() !== '' ||
-      this.selectedStatuses().length > 0 ||
-      this.selectedPriorities().length > 0 ||
-      this.dateFrom() !== null ||
-      this.dateTo() !== null ||
-      this.amountMin() !== null ||
-      this.amountMax() !== null
+      this.searchTerm !== '' ||
+      this.selectedStatuses.length > 0 ||
+      this.selectedPriorities.length > 0 ||
+      this.dateFrom !== null ||
+      this.dateTo !== null ||
+      this.amountMin !== null ||
+      this.amountMax !== null
     );
   }
 

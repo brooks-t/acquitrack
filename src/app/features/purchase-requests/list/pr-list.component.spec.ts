@@ -131,25 +131,29 @@ describe('PurchaseRequestListComponent', () => {
   });
 
   it('should clear filters', () => {
-    component.searchTerm.set('test');
-    component.selectedStatuses.set([PurchaseRequestStatus.DRAFT]);
-    component.dateFrom.set(new Date());
+    // Set up filter values using regular property assignment (modern approach)
+    component.searchTerm = 'test';
+    component.selectedStatuses = [PurchaseRequestStatus.DRAFT];
+    component.dateFrom = new Date();
 
     component.clearFilters();
 
-    expect(component.searchTerm()).toBe('');
-    expect(component.selectedStatuses()).toEqual([]);
-    expect(component.dateFrom()).toBeNull();
+    // Verify all filters are cleared
+    expect(component.searchTerm).toBe('');
+    expect(component.selectedStatuses).toEqual([]);
+    expect(component.dateFrom).toBeNull();
   });
 
   it('should detect active filters', () => {
     expect(component.hasActiveFilters()).toBe(false);
 
-    component.searchTerm.set('test');
+    // Test with search term
+    component.searchTerm = 'test';
     expect(component.hasActiveFilters()).toBe(true);
 
+    // Clear and test with status filter
     component.clearFilters();
-    component.selectedStatuses.set([PurchaseRequestStatus.DRAFT]);
+    component.selectedStatuses = [PurchaseRequestStatus.DRAFT];
     expect(component.hasActiveFilters()).toBe(true);
   });
 
